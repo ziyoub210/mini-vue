@@ -45,18 +45,21 @@ describe('effect', () => {
     run();
     expect(dummy).toBe(2);
   });
+  //run => get => set(执行所有的run) => get => set(执行所有的run)  => get
   it('stop', () => {
     let dummy;
     const obj = reactivity({ foo: 1 });
     const runner = effect(() => {
-      dummy = obj.foo;
+      dummy = obj.foo; //依赖收集 把effect收集进去了，然后后obj.foo set的时候就会触发这个effect
     });
-    obj.foo = 2;
+    obj.foo = 2; //set 会调用上面那个effect
     expect(dummy).toBe(2);
     stop(runner);
-    obj.foo++;
+    obj.foo++; //obj.foo = obj.foo + 1
     expect(dummy).toBe(2);
     runner();
+    expect(dummy).toBe(3);
+    obj.foo = 5;
     expect(dummy).toBe(3);
   });
   it('onStop', () => {
