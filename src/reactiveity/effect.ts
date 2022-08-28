@@ -1,5 +1,8 @@
 import { extend } from '../shared';
 type Fn = (...args: any) => any;
+let activeEffect: ReactiveEffect;
+let shouldTrack: boolean;
+
 class ReactiveEffect {
   private _fn: Fn;
   public scheduler: any;
@@ -10,8 +13,14 @@ class ReactiveEffect {
     this._fn = _fn;
   }
   run() {
+    if (!this.active) {
+      return this._fn();
+    }
+    shouldTrack = true;
     activeEffect = this;
-    return this._fn();
+    const result = this._fn();
+    shouldTrack = false;
+    return result;
   }
   stop() {
     if (this.active) {
@@ -29,6 +38,7 @@ function cleanupEffect(effect: any) {
 // 结构为 map: { map: set}
 const targetMap = new Map();
 export function track(target: any, key: any) {
+  if (!isTracking()) return;
   // target -> key -> dep
   let depsMap = targetMap.get(target);
   if (!depsMap) {
@@ -40,10 +50,13 @@ export function track(target: any, key: any) {
     dep = new Set();
     depsMap.set(key, dep);
   }
-  if (activeEffect) {
-    dep.add(activeEffect);
-    activeEffect.deps.push(dep);
-  }
+  if (dep.has(activeEffect)) return;
+  dep.add(activeEffect);
+  activeEffect.deps.push(dep);
+}
+
+function isTracking() {
+  return shouldTrack && activeEffect !== undefined;
 }
 
 export function trigger(target: any, key: any) {
@@ -60,7 +73,6 @@ export function trigger(target: any, key: any) {
   }
 }
 
-let activeEffect: ReactiveEffect;
 export function effect(fn: any, options: any = {}) {
   const _effect = new ReactiveEffect(fn);
   extend(_effect, options);
