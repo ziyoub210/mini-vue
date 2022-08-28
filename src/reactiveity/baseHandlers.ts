@@ -1,7 +1,15 @@
 import { track, trigger } from './effect';
-
+import { ReactiveFlags } from './reactivity';
 function createGetter(isReadonly: Boolean = false) {
   return function get(target: any, key: any) {
+    //判断是否是reactive对象
+    if (key === ReactiveFlags.IS_REACTIVE) {
+      return !isReadonly;
+    }
+    //判断是不是readonly对象
+    if (key === ReactiveFlags.IS_READONLY) {
+      return isReadonly;
+    }
     const res = Reflect.get(target, key);
     if (!isReadonly) {
       track(target, key);

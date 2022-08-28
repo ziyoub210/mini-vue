@@ -1,4 +1,4 @@
-import { readonly } from '../reactivity';
+import { readonly, isReadonly } from '../reactivity';
 describe('readonly', () => {
   it('happy path', () => {
     //只读
@@ -6,6 +6,8 @@ describe('readonly', () => {
     const wrapped = readonly(original);
     expect(wrapped).not.toBe(original);
     expect(wrapped.foo).toBe(1);
+    expect(isReadonly(wrapped)).toBe(true);
+    expect(isReadonly(original)).toBe(false);
   });
   it('warn when call set', () => {
     console.warn = jest.fn();
