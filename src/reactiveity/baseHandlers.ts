@@ -55,4 +55,3 @@ export const readonlyHandlers = {
 export const shallowReadonlyHandlers = extend({}, readonlyHandlers, {
   get: shallowReadonlyGet,
 });
-console.log(shallowReadonlyHandlers.get.toString());
