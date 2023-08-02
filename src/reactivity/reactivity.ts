@@ -18,9 +18,9 @@ export function readlony(raw) {
 }
 
 export function isReactive(value) {
-  return value[ReactiveFlags.iS_REACTIVE];
+  return !!value[ReactiveFlags.iS_REACTIVE];
 }
 
 export function isReadlony(value) {
-  return value[ReactiveFlags.iS_READLONY];
+  return !!value[ReactiveFlags.iS_READLONY];
 }
