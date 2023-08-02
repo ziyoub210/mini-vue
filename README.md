@@ -1,11 +1,11 @@
-实现简易版的vue3
+###实现简易版的vue3
 
 - [x] effect & reactive 依赖收集 & 触发更新
 - [x] 实现effect返回runner
 - [x] 实现effect scheduler功能
 - [x] 实现 effect  stop功能
 - [x] 实现 readlony 功能
-- [ ] 实现 isReactive & isReadlony
+- [x] 实现 isReactive & isReadlony
 - [ ] 优化 stop 功能
 - [ ] 实现 reactive 和 readonly 嵌套对象转换功能
 - [ ] 实现 shallowReadonly 功能

@@ -1,5 +1,6 @@
 import { track, trigger } from './effect';
 
+import { ReactiveFlags } from './reactivity';
 //这里三条是优化
 //提前创建好函数 再使用的时候无需重复创建
 
@@ -9,6 +10,13 @@ const readlonyGet = createGetter(true);
 
 function createGetter(isReadlony = false) {
   return function get(target, key) {
+    if (key === ReactiveFlags.iS_REACTIVE) {
+      return !isReadlony;
+    }
+    if (key === ReactiveFlags.iS_READLONY) {
+      return isReadlony;
+    }
+
     const res = Reflect.get(target, key);
     if (!isReadlony) {
       track(target, key);
