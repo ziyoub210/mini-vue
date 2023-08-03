@@ -7,8 +7,8 @@
 - [x] 实现 readlony 功能
 - [x] 实现 isReactive & isReadlony
 - [x] 优化 stop 功能
-- [ ] 实现 reactive 和 readonly 嵌套对象转换功能
-- [ ] 实现 shallowReadonly 功能
+- [x] 实现 reactive 和 readonly 嵌套对象转换功能
+- [x] 实现 shallowReadonly 功能
 - [ ] 实现 isProxy 功能
 - [ ] 实现 ref 功能
 - [ ] 实现 isRef 和 unRef 功能
