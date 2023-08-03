@@ -6,7 +6,7 @@
 - [x] 实现 effect  stop功能
 - [x] 实现 readlony 功能
 - [x] 实现 isReactive & isReadlony
-- [ ] 优化 stop 功能
+- [x] 优化 stop 功能
 - [ ] 实现 reactive 和 readonly 嵌套对象转换功能
 - [ ] 实现 shallowReadonly 功能
 - [ ] 实现 isProxy 功能

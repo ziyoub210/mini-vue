@@ -1,7 +1,7 @@
 import { extend } from '../shared/index';
 //全局变量 保存当前正在调用的effect
 let activeEffect;
-
+let shouldTrack; //是否应该收集依赖
 class ReactivityEffect {
   private _fn: any;
   active = true;
@@ -13,9 +13,16 @@ class ReactivityEffect {
     //保存调度器函数 如果有的话 在trigger触发时会执行这个
   }
   run() {
+    if (!this.active) {
+      return this._fn();
+    }
+    shouldTrack = true;
+
     activeEffect = this;
-    //调用runner 返回值
-    return this._fn();
+    const result = this._fn();
+    shouldTrack = false;
+
+    return result;
   }
   stop() {
     if (this.active) {
@@ -30,6 +37,7 @@ function cleanupEffect(effect: any) {
   effect.deps.forEach((dep: any) => {
     dep.delete(effect);
   });
+  effect.deps.length = 0;
 }
 
 /**
@@ -39,6 +47,7 @@ function cleanupEffect(effect: any) {
  */
 const targetMap = new Map();
 export function track(target, key) {
+  if (!isTracking()) return;
   let depsMap = targetMap.get(target);
   if (!depsMap) {
     depsMap = new Map();
@@ -52,6 +61,11 @@ export function track(target, key) {
   if (!activeEffect) return;
   dep.add(activeEffect);
   activeEffect.deps.push(dep);
+  // activeEffect = null
+}
+
+function isTracking() {
+  return shouldTrack && activeEffect !== undefined;
 }
 
 /** 当属性set时进行触发更新 将收集好的依赖全都在执行一遍 */
