@@ -1,6 +1,6 @@
 import { track, trigger } from './effect';
-
-import { ReactiveFlags } from './reactivity';
+import { isObject } from '../shared';
+import { ReactiveFlags, reactivity, readlony } from './reactivity';
 //这里三条是优化
 //提前创建好函数 再使用的时候无需重复创建
 
@@ -18,6 +18,9 @@ function createGetter(isReadlony = false) {
     }
 
     const res = Reflect.get(target, key);
+    if (isObject(res)) {
+      return isReadlony ? readlony(res) : reactivity(res);
+    }
     if (!isReadlony) {
       track(target, key);
     }

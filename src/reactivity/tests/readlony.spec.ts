@@ -22,4 +22,16 @@ describe('readlony', () => {
     expect(isReadlony(user)).toBe(true)
     expect(isReactive(user)).toBe(false)
   })
+
+  it('nested readlony', () => {
+    const origial = readlony({
+      nested: {
+        foo: 1,
+      },
+      array: [{ bar: 2 }],
+    });
+    expect(isReadlony(origial)).toBe(true)
+    expect(isReadlony(origial.nested)).toBe(true)
+    expect(isReadlony(origial.array[0])).toBe(true)
+  })
 });
