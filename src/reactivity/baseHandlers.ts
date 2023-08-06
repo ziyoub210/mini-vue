@@ -17,7 +17,6 @@ function createGetter(isReadlony = false, isShallow = false) {
     if (key === ReactiveFlags.iS_READLONY) {
       return isReadlony;
     }
-
     const res = Reflect.get(target, key);
     //浅层
     if (isShallow) {
@@ -55,5 +54,5 @@ export const readonlyHandlers = {
 };
 
 export const shallowReadonlyHandlers = extend({}, readonlyHandlers, {
-  get:shallowReadonlyGet
-})
+  get: shallowReadonlyGet,
+});

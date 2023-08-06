@@ -1,4 +1,4 @@
-import { reactivity, isReactive } from '../reactivity';
+import { reactivity, isReactive, isProxy } from '../reactivity';
 
 describe('reactivity', () => {
   it('happy path', () => {
@@ -17,8 +17,13 @@ describe('reactivity', () => {
       },
       array: [{ bar: 2 }],
     });
-    expect(isReactive(origial)).toBe(true)
-    expect(isReactive(origial.nested)).toBe(true)
-    expect(isReactive(origial.array[0])).toBe(true)
+    expect(isReactive(origial)).toBe(true);
+    expect(isReactive(origial.nested)).toBe(true);
+    expect(isReactive(origial.array[0])).toBe(true);
+  });
+
+  it('isProxy', () => {
+    const user = reactivity({ name: '小明' });
+    expect(isProxy(user)).toBe(true);
   });
 });

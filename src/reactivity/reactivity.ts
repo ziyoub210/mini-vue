@@ -28,3 +28,7 @@ export function isReactive(value) {
 export function isReadlony(value) {
   return !!value[ReactiveFlags.iS_READLONY];
 }
+
+export function isProxy(value) {
+  return isReactive(value) || isReadlony(value);
+}
