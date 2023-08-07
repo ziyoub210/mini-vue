@@ -1,3 +1,4 @@
+import { effect } from '../effect';
 import { reactivity, isReactive, isProxy } from '../reactivity';
 
 describe('reactivity', () => {
@@ -25,5 +26,11 @@ describe('reactivity', () => {
   it('isProxy', () => {
     const user = reactivity({ name: '小明' });
     expect(isProxy(user)).toBe(true);
+  });
+
+  it('aaa', () => {
+    const user = reactivity({
+      name: 'a',
+    });
   });
 });

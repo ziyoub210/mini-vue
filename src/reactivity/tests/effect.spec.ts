@@ -6,7 +6,7 @@ describe('effect', () => {
     const user = reactivity({
       age: 10,
     });
-    let nextAge:any;
+    let nextAge: any;
     effect(() => {
       nextAge = user.age + 1;
     });
@@ -90,6 +90,6 @@ describe('effect', () => {
       }
     );
     stop(runner);
-    expect(onStop).toBeCalledTimes(1)
+    expect(onStop).toBeCalledTimes(1);
   });
 });
