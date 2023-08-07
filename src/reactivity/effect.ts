@@ -2,14 +2,15 @@ import { extend } from '../shared/index';
 //全局变量 保存当前正在调用的effect
 let activeEffect;
 let shouldTrack; //是否应该收集依赖
-class ReactivityEffect {
+export class ReactivityEffect {
   private _fn: any;
   active = true;
   deps = []; //反向收集的依赖
   scheduler?: () => void;
   onStop?: () => void;
-  constructor(fn) {
+  constructor(fn, options) {
     this._fn = fn;
+    extend(this, options);
     //保存调度器函数 如果有的话 在trigger触发时会执行这个
   }
   run() {
@@ -90,8 +91,8 @@ export function triggerEffects(dep) {
 }
 
 export function effect(fn, options: any = {}) {
-  const _effect = new ReactivityEffect(fn);
-  extend(_effect, options);
+  const _effect = new ReactivityEffect(fn, options);
+  // extend(_effect, options);
   _effect.run();
   //返回runner
   const runner: any = _effect.run.bind(_effect);
