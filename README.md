@@ -19,7 +19,7 @@
 - [x] 实现初始化 element 主流程
 - [x] 实现组件代理对象
 - [x] 实现 shapeFlags
-- [ ] 实现组件 props 功能
+- [x] 实现组件 props 功能
 - [ ] 实现组件 emit 功能
 - [ ] 实现 Fragment 和 Text 类型节点
 - [ ] 实现 getCurrentInstance

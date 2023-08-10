@@ -30,13 +30,19 @@ function mountElement(vnode, container) {
     el.textContent = children;
   } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
     children.forEach((v) => {
-      mountElement(v, el);
+      patch(v, el);
     });
   }
   const { props } = vnode;
   for (const key in props) {
     const value = props[key];
-    el.setAttribute(key, value);
+    const isOn = (key: string) => /^on[A-Z]/.test(key);
+    if (isOn(key)) {
+      const event = key.slice(2).toLocaleLowerCase();
+      el.addEventListener(event, value);
+    } else {
+      el.setAttribute(key, value);
+    }
   }
   container.append(el);
 }

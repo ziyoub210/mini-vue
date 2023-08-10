@@ -1,19 +1,33 @@
 import { h } from '../../lib/guide-mini-vue.esm.js';
+import { Foo } from './foo.js';
 
-window.self = null;
 export const App = {
   render() {
-    window.self = this;
-    setTimeout(() => {
-      console.log(window.self, 'window.self');
-    });
     return h(
       'div',
       {
         id: 'root',
         class: ['blue'],
+        onClick() {
+          console.log('click');
+        },
+        onMousedown() {
+          console.log('mousedown');
+        },
       },
-      'hi' + this.msg
+      [
+        h(
+          'div',
+          {
+            class: 'red',
+          },
+          'hi' + this.msg
+        ),
+        h(Foo, {
+          count: 1,
+        }),
+      ]
+
       // [
       //   // 'hi mini-vue'
 
