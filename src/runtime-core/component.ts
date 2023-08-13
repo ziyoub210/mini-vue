@@ -1,5 +1,7 @@
 import { PublicInsatnceProxyHandlers } from './componentPublicInstance';
 import { initProps } from './componentProps';
+import { emit } from './componentEmit';
+
 import { shallowReadlony } from '../reactivity/reactivity';
 export function createComponentInstance(vnode) {
   const component = {
@@ -7,7 +9,9 @@ export function createComponentInstance(vnode) {
     type: vnode.type,
     setupState: {},
     props: {},
+    emit: (event: any) => {},
   };
+  component.emit = emit.bind(null, component) as any;
   return component;
 }
 export function setupComponent(instance) {
@@ -23,9 +27,12 @@ function setupStateFulComponent(instance) {
   instance.proxy = new Proxy({ _: instance }, PublicInsatnceProxyHandlers);
 
   const { setup } = Component;
+
   if (setup) {
     // function object
-    const setupResult = setup(shallowReadlony(instance.props));
+    const setupResult = setup(shallowReadlony(instance.props), {
+      emit: instance.emit,
+    });
 
     handleSetupResult(instance, setupResult);
   }
@@ -42,6 +49,5 @@ function handleSetupResult(instance, setupResult) {
 
 function finishComponentSetup(instance) {
   const Component = instance.type;
-  console.log(Component, 'Component');
   instance.render = Component.render;
 }

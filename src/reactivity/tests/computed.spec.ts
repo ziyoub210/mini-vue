@@ -1,6 +1,6 @@
-import { computed } from './computed';
-import { reactivity } from './reactivity';
-import { ref } from './ref';
+import { computed } from '../computed';
+import { reactivity } from '../reactivity';
+import { ref } from '../ref';
 describe('computed', () => {
   it('happy path', () => {
     const user = reactivity({
