@@ -5,7 +5,15 @@ export const App = {
   name: 'App',
   render() {
     const app = h('div', {}, 'app');
-    const foo = h(foo);
+    // const foo = h(Foo, {}, [h('p', {}, 'hello'), h('p', {}, '456')]);
+    const foo = h(
+      Foo,
+      {},
+      {
+        header: ({ age }) => h('p', {}, 'header' + age),
+        footer: () => h('p', {}, 'footer'),
+      }
+    );
     return h('div', {}, [app, foo]);
   },
   setup() {

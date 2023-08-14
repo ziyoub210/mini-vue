@@ -23,9 +23,16 @@ export const App = {
           },
           'hi' + this.msg
         ),
-        h(Foo, {
-          count: 1,
-        }),
+        h(
+          Foo,
+          {
+            id: 1,
+            aa: '2',
+            count: 1,
+          },
+          [h('div', {}, '你好')]
+        ),
+        h('div', { id: 'fffff' }, '我不好'),
       ]
 
       // [
