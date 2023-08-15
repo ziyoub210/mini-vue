@@ -31,11 +31,12 @@ function setupStateFulComponent(instance) {
   const { setup } = Component;
 
   if (setup) {
+    setCurrentInstance(instance);
     // function object
     const setupResult = setup(shallowReadlony(instance.props), {
       emit: instance.emit,
     });
-
+    setCurrentInstance(null);
     handleSetupResult(instance, setupResult);
   }
 }
@@ -52,4 +53,14 @@ function handleSetupResult(instance, setupResult) {
 function finishComponentSetup(instance) {
   const Component = instance.type;
   instance.render = Component.render;
+}
+
+let currentInstance;
+
+export function getCurrentInstance() {
+  return currentInstance;
+}
+
+export function setCurrentInstance(instance) {
+  currentInstance = instance;
 }
