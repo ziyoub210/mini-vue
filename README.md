@@ -22,7 +22,8 @@
 - [x] 实现组件 props 功能
 - [x] 实现组件 emit 功能
 - [x] 实现 Fragment 和 Text 类型节点
-- [ ] 实现 getCurrentInstance
+- [x] 实现 getCurrentInstance
+- [x] 实现 provide & inject
 - [ ] 实现 自定义渲染器 custom renderer
 - [ ] 更新 element 流程搭建
 - [ ] 更新 element props
