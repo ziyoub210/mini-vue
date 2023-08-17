@@ -2,6 +2,7 @@ import { PublicInsatnceProxyHandlers } from './componentPublicInstance';
 import { initProps } from './componentProps';
 import { initSlots } from './componentSlots';
 import { emit } from './componentEmit';
+import { proxyRefs } from '../reactivity/index';
 
 import { shallowReadlony } from '../reactivity/reactivity';
 export function createComponentInstance(vnode, parent) {
@@ -14,6 +15,8 @@ export function createComponentInstance(vnode, parent) {
     slots: {},
     provides: parent ? parent.provides : {},
     parent,
+    isMounted: false,
+    subTree: {},
   };
   component.emit = emit.bind(null, component) as any;
   return component;
@@ -46,7 +49,7 @@ function setupStateFulComponent(instance) {
 function handleSetupResult(instance, setupResult) {
   //TODO function
   if (typeof setupResult === 'object') {
-    instance.setupState = setupResult;
+    instance.setupState = proxyRefs(setupResult);
   }
 
   finishComponentSetup(instance);

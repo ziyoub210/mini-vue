@@ -1,5 +1,5 @@
 import { tractEffects, triggerEffects, isTracking } from './effect';
-import { hasChanged, isObject } from '../shared';
+import { hasChanged, isObject } from '../shared/index';
 import { reactivity } from './reactivity';
 
 // ref 原理和 reactive 一样
@@ -45,7 +45,7 @@ export function ref(value) {
 }
 
 export function isRef(ref) {
-  return !!ref.__v_isRef;
+  return !!(ref && ref.__v_isRef);
 }
 export function unRef(ref) {
   return isRef(ref) ? ref.value : ref;
