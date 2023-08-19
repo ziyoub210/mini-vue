@@ -50,7 +50,7 @@ export function createRender(options) {
     } else {
       //更新
 
-      patchElement(n1, n2, container, parentComponent);
+      patchElement(n1, n2, container);
     }
   }
   function mountChildren(children, container, parentComponent) {
@@ -79,14 +79,39 @@ export function createRender(options) {
       // } else {
       //   el.setAttribute(key, value);
       // }
-      hostPatchProp(el, key, value);
+      hostPatchProp(el, key, null, value);
     }
     // container.append(el);
     hostInsert(el, container);
   }
-  function patchElement(n1, n2, container, parentComponent) {
+  function patchElement(n1, n2, container) {
     console.log('n1', n1);
     console.log('n2', n2);
+
+    const oldProps = n1.props || {};
+    const newProps = n2.props || {};
+
+    const el = (n2.el = n1.el);
+
+    patchProps(el, oldProps, newProps);
+  }
+
+  function patchProps(el, oldProps, newProps) {
+    if (oldProps !== newProps) {
+      for (const key in newProps) {
+        const prevProp = oldProps[key];
+        const nextProp = newProps[key];
+        if (prevProp !== nextProp) {
+          hostPatchProp(el, key, prevProp, nextProp);
+        }
+      }
+
+      for (const key in oldProps) {
+        if (!(key in newProps)) {
+          hostPatchProp(el, key, oldProps[key], null);
+        }
+      }
+    }
   }
 
   function processComponent(n1, n2, container, parentComponent) {
@@ -116,10 +141,6 @@ export function createRender(options) {
         const prevSubTree = instance.subTree;
         //这里对比
         // instance.subTree = subTree;/
-        console.log('cur', subTree);
-        console.log('pre', prevSubTree);
-
-        console.log('更新');
         instance.subTree = subTree;
 
         patch(prevSubTree, subTree, container, instance);

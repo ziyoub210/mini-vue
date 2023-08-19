@@ -26,7 +26,7 @@
 - [x] 实现 provide & inject
 - [x] 实现 自定义渲染器 custom renderer
 - [x] 更新 element 流程搭建
-- [ ] 更新 element props
+- [x] 更新 element props
 - [ ] 更新 element children
 - [ ] 更新 element 的 children - 双端对比 diff 算法（1）
 - [ ] 更新 element 的 children - 双端对比 diff 算法（2）
