@@ -170,7 +170,6 @@ export function createRender(options) {
       e1--;
       e2--;
     }
-    debugger;
     //3.新的比老的多创建
     if (i > e1) {
       if (i <= e2) {
@@ -193,12 +192,13 @@ export function createRender(options) {
       //2.遍历老的节点 如果在新的里边找到， 则更新， 如果没找到 则删除
       let s1 = i; //老节点的开始
       let s2 = i;
-      const toBePatched = e2 - s2 - 1;
+      const toBePatched = e2 - s2 + 1;
       let patched = 0;
       const keyToNewIndexMap = new Map();
       const newIndexToOldIndexMap = new Array(toBePatched);
-      for (let i = 0; i < toBePatched; i++) newIndexToOldIndexMap[i] = 0;
-      newIndexToOldIndexMap[i] = 0;
+      for (let i = 0; i < toBePatched; i++) {
+        newIndexToOldIndexMap[i] = 0;
+      }
       for (let i = s2; i <= e2; i++) {
         const nextChild = c2[i];
         keyToNewIndexMap.set(nextChild.key, i);
@@ -212,7 +212,7 @@ export function createRender(options) {
           continue;
         }
         // null undefined
-        let newIndex;
+        let newIndex; //当前节点在新的节点里的下标
         if (prevChild.key != null) {
           newIndex = keyToNewIndexMap.get(prevChild.key);
         } else {
@@ -233,12 +233,13 @@ export function createRender(options) {
         }
       }
 
+      //寻找最长递增子序列
       const increasingNewIndexSequence = getSequence(newIndexToOldIndexMap);
       let j = increasingNewIndexSequence.length - 1;
       for (let i = toBePatched - 1; i >= 0; i--) {
         const nextIndex = i + s2;
         const nextChild = c2[nextIndex];
-        const anchor = nextIndex + 1 < l2 ? c2[nextIndex].el : null;
+        const anchor = nextIndex + 1 < l2 ? c2[nextIndex + 1].el : null;
         if (newIndexToOldIndexMap[i] === 0) {
           patch(null, nextChild, container, parentComponent, anchor);
         } else {
