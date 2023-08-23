@@ -43,7 +43,7 @@ function setupStateFulComponent(instance) {
     const setupResult = setup(shallowReadlony(instance.props), {
       emit: instance.emit,
     });
-    setCurrentInstance(null);
+    // setCurrentInstance(null);
     handleSetupResult(instance, setupResult);
   }
 }

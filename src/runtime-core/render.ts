@@ -4,6 +4,7 @@ import { Fragment, Text } from './createVNode';
 import { createAppApi } from './createApp';
 import { effect } from '../reactivity/index';
 import { shouleUpdateComponent } from './componentUpdateUtils';
+import { queueJobs } from './scheduler';
 
 export function createRender(options) {
   const {
@@ -290,33 +291,42 @@ export function createRender(options) {
   }
 
   function setupRenderEffect(instance, initalVNode, container, anchor) {
-    instance.update = effect(() => {
-      if (!instance.isMounted) {
-        const subTree = (instance.subTree = instance.render.call(instance.proxy));
-        //vnode
-        patch(null, subTree, container, instance, anchor);
+    instance.update = effect(
+      () => {
+        console.log('n');
+        if (!instance.isMounted) {
+          const subTree = (instance.subTree = instance.render.call(instance.proxy));
+          //vnode
+          patch(null, subTree, container, instance, anchor);
 
-        //这里 element => mount
-        initalVNode.el = subTree.el;
-        console.log(instance, 'initalVNode');
-        instance.isMounted = true;
-      } else {
-        const { next, vnode } = instance;
-        if (next) {
-          next.el = vnode.el;
-          updateComponentPreRender(instance, next);
+          //这里 element => mount
+          initalVNode.el = subTree.el;
+          console.log(instance, 'initalVNode');
+          instance.isMounted = true;
+        } else {
+          const { next, vnode } = instance;
+          if (next) {
+            next.el = vnode.el;
+            updateComponentPreRender(instance, next);
+          }
+          const subTree = instance.render.call(instance.proxy);
+          const prevSubTree = instance.subTree;
+          //这里对比
+          // instance.subTree = subTree;/
+          instance.subTree = subTree;
+          console.log(prevSubTree, 'prevSubTree');
+          console.log(subTree, 'subTree');
+
+          patch(prevSubTree, subTree, container, instance, anchor);
         }
-        const subTree = instance.render.call(instance.proxy);
-        const prevSubTree = instance.subTree;
-        //这里对比
-        // instance.subTree = subTree;/
-        instance.subTree = subTree;
-        console.log(prevSubTree, 'prevSubTree');
-        console.log(subTree, 'subTree');
-
-        patch(prevSubTree, subTree, container, instance, anchor);
+      },
+      {
+        scheduler() {
+          console.log('update scr');
+          queueJobs(instance.update);
+        },
       }
-    });
+    );
   }
   return {
     createApp: createAppApi(render),

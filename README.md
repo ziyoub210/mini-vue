@@ -32,3 +32,4 @@
 - [x] 更新 element 的 children - 双端对比 diff 算法（2）
 - [x] 更新 element 的 children - 双端对比 diff 算法（3）
 - [x] 实现组件更新功能
+- [x] 实现 nextTick
