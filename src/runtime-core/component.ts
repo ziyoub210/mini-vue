@@ -17,6 +17,8 @@ export function createComponentInstance(vnode, parent) {
     parent,
     isMounted: false,
     subTree: {},
+    component: null,
+    next: null, //下次要更新的虚拟节点
   };
   component.emit = emit.bind(null, component) as any;
   return component;

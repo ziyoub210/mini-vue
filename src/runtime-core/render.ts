@@ -3,6 +3,7 @@ import { ShapeFlags } from '../shared/ShapeFlags';
 import { Fragment, Text } from './createVNode';
 import { createAppApi } from './createApp';
 import { effect } from '../reactivity/index';
+import { shouleUpdateComponent } from './componentUpdateUtils';
 
 export function createRender(options) {
   const {
@@ -187,6 +188,7 @@ export function createRender(options) {
         i++;
       }
     } else {
+      debugger;
       //乱序: 中间对比
       //1.先把新的下标和key存储起来
       //2.遍历老的节点 如果在新的里边找到， 则更新， 如果没找到 则删除
@@ -262,17 +264,33 @@ export function createRender(options) {
   }
 
   function processComponent(n1, n2, container, parentComponent, anchor) {
-    mountComponent(n2, container, parentComponent, anchor);
+    if (!n1) {
+      mountComponent(n2, container, parentComponent, anchor);
+    } else {
+      updateComponent(n1, n2);
+    }
+  }
+  function updateComponent(n1, n2) {
+    const instance = (n2.component = n1.component);
+
+    if (shouleUpdateComponent(n1, n2)) {
+      // instance.update();
+      instance.next = n2;
+      instance.update();
+    } else {
+      n2.el = n1.el;
+      instance.vnode = n2;
+    }
   }
 
   function mountComponent(initalVNode, container, parentComponent, anchor) {
-    const instance = createComponentInstance(initalVNode, parentComponent);
+    const instance = (initalVNode.component = createComponentInstance(initalVNode, parentComponent));
     setupComponent(instance);
     setupRenderEffect(instance, initalVNode, container, anchor);
   }
 
   function setupRenderEffect(instance, initalVNode, container, anchor) {
-    effect(() => {
+    instance.update = effect(() => {
       if (!instance.isMounted) {
         const subTree = (instance.subTree = instance.render.call(instance.proxy));
         //vnode
@@ -283,8 +301,12 @@ export function createRender(options) {
         console.log(instance, 'initalVNode');
         instance.isMounted = true;
       } else {
+        const { next, vnode } = instance;
+        if (next) {
+          next.el = vnode.el;
+          updateComponentPreRender(instance, next);
+        }
         const subTree = instance.render.call(instance.proxy);
-
         const prevSubTree = instance.subTree;
         //这里对比
         // instance.subTree = subTree;/
@@ -300,7 +322,11 @@ export function createRender(options) {
     createApp: createAppApi(render),
   };
 }
-
+function updateComponentPreRender(instance, nextVnode) {
+  instance.vnode = nextVnode;
+  instance.next = null;
+  instance.props = nextVnode.props;
+}
 function getSequence(arr: number[]): number[] {
   const p = arr.slice();
   const result = [0];

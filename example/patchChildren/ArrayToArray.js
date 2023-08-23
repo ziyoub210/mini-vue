@@ -64,6 +64,7 @@ const prevChildren = [
   h('p', { key: 'A' }, 'A'),
   h('p', { key: 'B' }, 'B'),
   h('p', { key: 'C' }, 'C'),
+  h('p', { key: 'H' }, 'H'),
   h('p', { key: 'D' }, 'D'),
   h('p', { key: 'E' }, 'E'),
   h('p', { key: 'F' }, 'F'),
@@ -72,9 +73,9 @@ const prevChildren = [
 const nextChildren = [
   h('p', { key: 'A' }, 'A'),
   h('p', { key: 'B' }, 'B'),
-  h('p', { key: 'E' }, 'E'),
-  h('p', { key: 'C' }, 'C'),
-  h('p', { key: 'D' }, 'D'),
+  h('p', { key: 'E' }, 'E'), // 下标: 0 value: 6
+  h('p', { key: 'C' }, 'C'), // 下标：1 value: 3
+  h('p', { key: 'D' }, 'D'), // 下标：2 value: 5
   h('p', { key: 'F' }, 'F'),
   h('p', { key: 'G' }, 'G'),
 ];
