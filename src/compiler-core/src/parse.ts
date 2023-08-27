@@ -5,7 +5,9 @@ enum TagType {
 }
 export function baseParse(content: string) {
   const context = createParseContext(content);
-  return createRoot(parseChildren(context));
+  const root = createRoot(parseChildren(context, []));
+  console.log(root, 'root');
+  return root;
 }
 
 function createRoot(children) {
@@ -14,46 +16,81 @@ function createRoot(children) {
   };
 }
 
-function parseChildren(context) {
+function parseChildren(context, ancestors) {
   const nodes: any = [];
-
-  let node;
-  const s = context.source;
-  if (s.startsWith('{{')) {
-    node = parseInterpolation(context);
-  } else if (s[0] === '<') {
-    if (/[a-z]/.test(s[1])) {
-      node = parseElement(context);
+  while (!isEnd(context, ancestors)) {
+    let node;
+    const s = context.source;
+    if (s.startsWith('{{')) {
+      node = parseInterpolation(context);
+    } else if (s[0] === '<') {
+      if (/[a-z]/.test(s[1])) {
+        node = parseElement(context, ancestors);
+      }
     }
+    if (!node) {
+      node = parseText(context);
+    }
+    nodes.push(node);
   }
-  if (!node) {
-    node = parseText(context);
-  }
-  nodes.push(node);
 
   return nodes;
 }
 
+function isEnd(context, ancestors: any) {
+  const s: string = context.source;
+  if (s.startsWith('</')) {
+    for (let i = ancestors.length - 1; i >= 0; i--) {
+      const tag = ancestors[i].tag;
+      if (startwWithEndTagOpen(s, tag)) {
+        return true;
+      }
+    }
+  }
+  return !s;
+}
+
 function parseText(context) {
-  //1. 获取content
-  const content = parseTextData(context, context.source.length);
+  let endTokens = ['{{', '<'];
+  let endIndex = context.source.length;
+  for (let i = 0; i < endTokens.length; i++) {
+    const index = context.source.indexOf(endTokens[i]);
+    if (index !== -1 && endIndex > index) {
+      endIndex = index;
+    }
+  }
 
-  //2. 推进
-  advanceBy(context, content.length);
-
+  const content = parseTextData(context, endIndex);
+  console.log(content, 'context,-----------');
   return {
     type: NodeTypes.TEXT,
     content,
   };
 }
 function parseTextData(context, length) {
-  return context.source.slice(0, length);
+  const content = context.source.slice(0, length);
+  advanceBy(context, length);
+  return content;
 }
 
-function parseElement(context) {
-  const element = parseTag(context, TagType.START);
-  parseTag(context, TagType.END);
+function parseElement(context, ancestors) {
+  const element: any = parseTag(context, TagType.START);
+  ancestors.push(element);
+  element.children = parseChildren(context, ancestors);
+  ancestors.pop();
+
+  // if (context.source.slice(2, 2 + element.tag.length) === element.tag) {
+  if (startwWithEndTagOpen(context.source, element.tag)) {
+    parseTag(context, TagType.END);
+  } else {
+    throw new Error(`缺少结束标签： ${element.tag}`);
+  }
+
   return element;
+}
+
+function startwWithEndTagOpen(source, tag) {
+  return source.startsWith('</') && source.slice(2, 2 + tag.length).toLowerCase() === tag;
 }
 
 function parseTag(context, type: TagType) {
@@ -84,7 +121,7 @@ function parseInterpolation(context: any) {
   const rawContent = parseTextData(context, rawContentLength);
   const content = rawContent.trim();
 
-  advanceBy(context, rawContentLength + closeDelemiter.length);
+  advanceBy(context, closeDelemiter.length);
 
   return {
     type: NodeTypes.INTERPOLATION,
