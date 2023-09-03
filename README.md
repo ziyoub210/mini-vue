@@ -39,3 +39,4 @@
 - [x] 实现 解析三种联合类型
 - [x] 实现 代码 transform 功能
 - [x] 实现 代码生成插值类型
+- [x] 实现 编译 template 成 render 函数

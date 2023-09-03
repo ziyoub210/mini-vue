@@ -293,9 +293,9 @@ export function createRender(options) {
   function setupRenderEffect(instance, initalVNode, container, anchor) {
     instance.update = effect(
       () => {
-        console.log('n');
         if (!instance.isMounted) {
-          const subTree = (instance.subTree = instance.render.call(instance.proxy));
+          console.log(instance.render);
+          const subTree = (instance.subTree = instance.render.call(instance.proxy, instance.proxy));
           //vnode
           patch(null, subTree, container, instance, anchor);
 
@@ -309,7 +309,7 @@ export function createRender(options) {
             next.el = vnode.el;
             updateComponentPreRender(instance, next);
           }
-          const subTree = instance.render.call(instance.proxy);
+          const subTree = instance.render.call(instance.proxy, instance.proxy);
           const prevSubTree = instance.subTree;
           //这里对比
           // instance.subTree = subTree;/
